@@ -1,0 +1,43 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="corp-ds-customer-footer">
+	<template>
+		<style include="shared-styles">
+			:host {
+				display: block;
+				padding-left: 10px;
+			}
+
+			footer {
+				margin-top: 100px;
+				background-color: #FF6200;
+				height: 20px;
+				width: 99%
+			}
+
+			.footer-content {
+
+				margin-left: 1150px;
+				color: white;
+				font-family: 'Open Sans', sans-serif;
+			}
+		</style>
+		<footer>
+			<div class="relative">
+				<div class="fit">
+					<span class="footer-content">&copy; Corp Technologies</span>
+				</div>
+			</div>
+		</footer>
+	</template>
+
+	<script>
+		class IngCustomerDsFooter extends Polymer.Element {
+			static get is() { return 'corp-ds-customer-footer'; }
+		}
+
+		window.customElements.define(IngCustomerDsFooter.is, IngCustomerDsFooter);
+	</script>
+</dom-module>

@@ -1,0 +1,168 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="corp-ds-customer-fonts.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-grid.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="corp-ds-customer-fonts.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<dom-module id="corp-ds-customer-cosigner-details">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            vaadin-grid {
+                height: auto;
+            }
+
+            paper-dialog {
+
+                width: 50%;
+            }
+
+            paper-button.sign {
+
+                font-family: 'Open Sans', sans-serif;
+                font-weight: bold;
+                background-color: #FF6200;
+                color: white;
+            }
+
+            p {
+
+                font-family: 'Open Sans', sans-serif;
+                color: blue;
+            }
+
+            .header-text {
+
+                font-family: 'Open Sans', sans-serif;
+                font-weight: bold;
+                color: #FF6200;
+            }
+
+            .approved {
+                display: inline-block;
+                padding: 6px 12px;
+                margin-bottom: 0;
+                font-size: 14px;
+                font-weight: normal;
+                line-height: 1.42857143;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: middle;
+                -ms-touch-action: manipulation;
+                touch-action: manipulation;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                background-image: none;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                background-color: #5cb85c;
+                color: #fff;
+                border-color: #4cae4c;
+                width: 50%;
+            }
+
+            .pending {
+
+                display: inline-block;
+                padding: 6px 12px;
+                margin-bottom: 0;
+                font-size: 14px;
+                font-weight: normal;
+                line-height: 1.42857143;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: middle;
+                -ms-touch-action: manipulation;
+                touch-action: manipulation;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                background-image: none;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                color: #fff;
+                background-color: #f0ad4e;
+                border-color: #eea236;
+                width: 50%;
+            }
+        </style>
+        <paper-dialog id="cosignerDetails">
+            <h2>
+                <p>View Cosigner Details</p>
+            </h2>
+            <div class="card">
+                <vaadin-grid aria-label="Array Data Example" items="[[items]]">
+                    <vaadin-grid-column>
+                        <template class="header">
+                            <span class="header-text">COSIGNER NAME</span>
+                        </template>
+                        <template>
+                            <div>
+                                <iron-icon style="color:green;" icon="social:person"></iron-icon>
+                                <span class="item-text">[[item.id]]</span>
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column>
+                        <template class="header">
+                            <span class="header-text">STATUS</span>
+                        </template>
+                        <template>
+                            <template is="dom-if" if="{{item.cosignStatus}}">
+                                <div class="approved">
+                                    APPROVED
+                                </div>
+                            </template>
+                            <template is="dom-if" if="{{!item.cosignStatus}}">
+                                <div class="pending">
+                                    PENDING
+                                </div>
+                            </template>
+                        </template>
+                    </vaadin-grid-column>
+                </vaadin-grid>
+            </div>
+            <paper-button class="sign" dialog-dismiss>CLOSE</paper-button>
+        </paper-dialog>
+    </template>
+
+    <script>
+        class IngDsCosignerDetails extends Polymer.Element {
+            static get is() { return 'corp-ds-customer-cosigner-details'; }
+            static get properties() {
+                return {
+
+                    cosignerDetails: {
+                        type: Array,
+                        notify: true,
+                        reflectToAttribute: true
+
+                    },
+                    items: {
+                        type: Array
+                    }
+                };
+            }
+            _showCosignerDetails(items) {
+                // this.items = items
+                this.items = items;
+                this.$.cosignerDetails.open();
+            }
+
+        }
+        window.customElements.define(IngDsCosignerDetails.is, IngDsCosignerDetails);
+    </script>
+</dom-module>

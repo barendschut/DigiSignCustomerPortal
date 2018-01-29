@@ -1,0 +1,39 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="corp-ds-customer-fonts.html" />
+
+<dom-module id="corp-ds-customer-tabs">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      @media screen and (max-width: 500px) and (min-width: 300px) {
+
+        paper-tabs {
+
+          width: 147px;
+
+        }
+      }
+    </style>
+
+    <paper-tabs>
+      <paper-tab>Overview</paper-tab>
+      <paper-tab>Help</paper-tab>
+      <paper-tab>Logout</paper-tab>
+    </paper-tabs>
+  </template>
+
+  <script>
+    class IngDsCustomerTabs extends Polymer.Element {
+      static get is() { return 'corp-ds-customer-tabs'; }
+    }
+
+    window.customElements.define(IngDsCustomerTabs.is, IngDsCustomerTabs);
+  </script>
+</dom-module>

@@ -1,0 +1,86 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="corp-ds-customer-overview">
+	<template>
+		<style include="shared-styles">
+			:host {
+				display: block;
+				padding: 10px;
+			}
+
+			#ingoverview {
+
+				@apply --layout-center-justified;
+
+			}
+
+			#ingoverview .card>paper-card {
+
+				--paper-card-header: {
+					background-color: white;
+
+				}
+				--paper-card-header-text: {
+
+					color: #FF6200;
+				}
+				;
+			}
+
+			.card-content img {
+				position: relative;
+				max-width: 100%;
+				height: 210px;
+			}
+
+			button {
+				outline: 0;
+				background: #FF6200;
+				width: 100%;
+				border: 0;
+				padding: 15px;
+				border-top-left-radius: 3px;
+				border-top-right-radius: 3px;
+				border-bottom-left-radius: 3px;
+				border-bottom-right-radius: 3px;
+				color: #FFFFFF;
+				font-size: 14px;
+				-webkit-transition: all 0.3 ease;
+				transition: all 0.3 ease;
+				cursor: pointer;
+			}
+
+			p {
+				font-family: 'Open Sans', sans-serif;
+			}
+
+			button {
+				font-family: 'Open Sans', sans-serif;
+			}
+		</style>
+
+
+		<div id="ingoverview">
+			<paper-card>
+				<div class="card-content">
+					<img src="./images/ing_ds.jpg" />
+					<p>
+						Digital Signature Services Platform for Corp
+					</p>
+					<button>More About Digital Signature</button>
+				</div>
+			</paper-card>
+		</div>
+
+	</template>
+
+	<script>
+		class IngCustomerOverview extends Polymer.Element {
+			static get is() { return 'corp-ds-customer-overview'; }
+		}
+
+		window.customElements.define(IngCustomerOverview.is, IngCustomerOverview);
+	</script>
+</dom-module>

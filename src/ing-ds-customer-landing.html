@@ -1,0 +1,35 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="corp-ds-customer-overview.html">
+<link rel="import" href="corp-ds-customer-login.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="corp-ds-customer-landing">
+  <template>
+    <style include="shared-styles iron-flex iron-flex-layout iron-flex-alignment">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+    </style>
+    <div class="horizontal center-justified layout">
+      <div class="layout horizontal wrap">
+        <div>
+          <corp-ds-customer-overview></corp-ds-customer-overview>
+        </div>
+        <div>
+          <corp-ds-customer-login></corp-ds-customer-login>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    class IngCustomerDsLanding extends Polymer.Element {
+      static get is() { return 'corp-ds-customer-landing'; }
+    }
+
+    window.customElements.define(IngCustomerDsLanding.is, IngCustomerDsLanding);
+  </script>
+</dom-module>

@@ -1,0 +1,355 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-grid.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="corp-ds-customer-fonts.html">
+<link rel="import" href="corp-ds-customer-cosigner-details.html">
+
+<dom-module id="corp-ds-customer-doc-history">
+	<template>
+		<style include="shared-styles">
+			:host {
+				display: block;
+				padding: 10px;
+				height: -moz-calc(100% - 100px);
+				/* Firefox */
+				height: -webkit-calc(100% - 100px);
+				/* Chrome, Safari */
+				height: calc(100% - 100px);
+				/* IE9+ and future browsers */
+			}
+
+			h2 {
+				color: #FF6200;
+				font-family: 'Open Sans', sans-serif;
+			}
+
+			paper-button.green {
+				background-color: var(--paper-green-500);
+				color: white;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: bold;
+			}
+
+			paper-button[disabled] {
+				background: #DDD;
+				border: 1px solid #CCC;
+			}
+
+			paper-button.sign {
+
+				font-family: 'Open Sans', sans-serif;
+				font-weight: bold;
+				background-color: #FF6200;
+				color: white;
+			}
+
+			.card-content {
+
+				border: none;
+			}
+
+			.header-text {
+
+				font-family: 'Open Sans', sans-serif;
+				font-weight: bold;
+				color: #FF6200;
+			}
+
+			paper-checkbox {
+
+				color: #FF6200;
+			}
+
+			.item-text {
+				font-family: 'Open Sans', sans-serif;
+			}
+
+			paper-card {
+				border: none;
+				--paper-card-header: {
+					background-color: white;
+
+				}
+				--paper-card-header-text: {
+
+					color: #FF6200;
+					font-family: 'Open Sans', sans-serif;
+				}
+				;
+			}
+
+			#cosigner-grid vaadin-grid {
+
+				height: auto;
+			}
+
+			object {
+
+				height: 500px;
+				width: 500px;
+			}
+		</style>
+		<iron-ajax id="clientDocHistoryAjax" method="GET" url="/digisign/signrequests/0/1"
+				   on-response="handleResponse" on-error="handleError"
+		 content-type="text/json" handle-as="json"></iron-ajax>
+
+		<iron-ajax id="signDocument" headers='{"Accept": "*/*"}' method="post" on-response="_handleSignDocumentResponse" on-error="handleError"
+		 content-type="text/json" handle-as="json"></iron-ajax>
+		<div class="card">
+			<div>
+				<h2>VIEW SIGN REQUESTS</h2>
+				<vaadin-grid aria-label="Array Data Example" items="[[items]]">
+					<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">SIGNATURE ID</span>
+						</template>
+						<template>
+							<span class="item-text">[[item.id]]</span>
+						</template>
+					</vaadin-grid-column>
+					<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">Employee Name</span>
+						</template>
+						<template>
+							<span class="item-text">[[item.employee.name]]</span>
+						</template>
+					</vaadin-grid-column>
+					<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">Employee ID</span>
+						</template>
+						<template>
+							<span class="item-text">[[item.employee.id]]</span>
+						</template>
+					</vaadin-grid-column>
+					<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">DOCUMENT NAME</span>
+						</template>
+						<template>
+							<div>
+								<iron-icon style="color:red" icon="image:picture-as-pdf"></iron-icon>
+								<a class="item-text" href="javascript:void(0)" style="margin-left:-5px;">
+									<paper-button on-tap="_displayDocument">[[item.documents.0.fileName]]</paper-button>
+								</a>
+							</div>
+						</template>
+					</vaadin-grid-column>
+
+					<!--<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">COSIGNER NAME</span>
+						</template>
+						<template>
+							<span class="item-text">N/A</span>
+						</template>
+					</vaadin-grid-column>-->
+
+					<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">STATUS</span>
+						</template>
+						<template>
+							<span class="item-text">{{getSignStatus(item)}}</span>
+						</template>
+					</vaadin-grid-column>
+
+					<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">Cosigner</span>
+						</template>
+						<template>
+							<div id="cosigner-grid">
+								<a class="item-text" href="javascript:void(0)">
+									<paper-button on-tap="_showCosignerDetails">View</paper-button>
+								</a>
+							</div>
+						</template>
+					</vaadin-grid-column>
+
+					<vaadin-grid-column>
+						<template class="header">
+							<span class="header-text">ACTION</span>
+						</template>
+						<template id="colTemplate">
+							<div>
+								<paper-button class="green" disabled$="[[isSigned(item.status)]]" raised on-click="_openModalDialog">Sign</paper-button>
+							</div>
+						</template>
+					</vaadin-grid-column>
+				</vaadin-grid>
+			</div>
+		</div>
+		<paper-dialog id="viewDocument">
+			<div class="card-content">
+				<div>
+					<div>
+						<object style="border: none;" standby="loading" id="contentarea" type="text/html"></object>
+					</div>
+				</div>
+			</div>
+		</paper-dialog>
+		<paper-dialog id="signAction">
+			<h2>Please Read Terms and Conditions</h2>
+			<div class="card-content">
+				<div>
+					<div></div>
+					<div></div>
+					<iron-form id="signRequestForm">
+						<form>
+							<paper-checkbox id="is_agreeTerms" required error-message="Please Agree!" checked>
+								<small>
+									<p>By using our Services, you are agreeing to these terms. Please read them carefully. Our Services are very diverse</br>so sometimes
+									additional terms or product requirements (including age requirements) may apply.</p>
+								</small>
+							</paper-checkbox>
+						</form>
+					</iron-form>
+				</div>
+			</div>
+			</div>
+			<paper-button class="sign" dialog-confirm autofocus on-tap="_signDocument">SIGN</paper-button>
+			<paper-button class="sign" dialog-dismiss>CANCEL</paper-button>
+			</div>
+			</div>
+		</paper-dialog>
+		<div hidden$="[[hide]]">
+			<corp-ds-customer-spinner></corp-ds-customer-spinner>
+		</div>
+		<div id="cosignerDetails">
+			<corp-ds-customer-cosigner-details cosignerDetails="{{cosignerDetails}}"></corp-ds-customer-cosigner-details>
+		</div>
+	</template>
+	<script>
+		class IngDSCustomerDocHistory extends Polymer.Element {
+			static get is() { return 'corp-ds-customer-doc-history'; }
+			static get properties() {
+				return {
+					storedUser: {
+						type: Object,
+						value: '',
+					},
+					items: {
+						type: Array,
+						value: function () { return []; }
+					},
+					item: {
+						type: Object
+					},
+                    signatureId: {
+						type: String
+					},
+					test: {
+						type: String
+					},
+					hide: {
+						type: Boolean,
+						value: false
+
+					},
+					cosignerDetails: {
+						type: Array,
+						notify: true
+					}
+				};
+			}
+			ready() {
+				super.ready();
+				this.hide = false;
+				let userPrincipal = this._getUserPrinicipal();
+				if (userPrincipal.id_token != null && userPrincipal.loggedin) {
+					console.log(userPrincipal.id_token);
+					this.$.clientDocHistoryAjax.headers['Authorization'] = userPrincipal.id_token;
+				}
+				this.$.clientDocHistoryAjax.generateRequest();
+
+			}
+			isSigned(status) {
+				if (status == "Signed") {
+					return true;
+				}
+				return false;
+			}
+			_getUserPrinicipal() {
+				const userPrincipal = JSON.parse(localStorage.getItem("user-storage"));
+				return userPrincipal;
+
+			}
+			_openModalDialog(event) {
+				if(!this.$.is_agreeTerms.checked)
+				this.$.is_agreeTerms.checked=true;
+				this.signatureId = event.model.item.id;
+				this.$.signAction.open(event.model.item.id);
+			}
+			_displayDocument(event) {
+
+				const downloadUrl = "/digisign/document/" + event.model.item.documents[0].id + "/";
+				//const downloadUrl = "/digisign/document/" + event.model.item.requestId + "/" + event.model.item.documentName + "/";
+				//const downloadUrl = '/digisign/document/' + event.model.item.documentId;
+				const userPrincipal = this._getUserPrinicipal();
+				let url = null;
+				var context = this;
+				this._downloadFile(downloadUrl, userPrincipal, function (blob) {
+					url = URL.createObjectURL(blob);
+					context.$.contentarea.setAttribute('data', url);
+					context.$.viewDocument.open();
+				});
+			}
+			_downloadFile(url, userPrincipal, success) {
+				const xhr = new XMLHttpRequest();
+				xhr.open('GET', url, true);
+				xhr.setRequestHeader('Authorization', userPrincipal.id_token);
+				xhr.responseType = 'blob';
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4) {
+						if (success) success(xhr.response);
+					}
+				};
+				xhr.send(null);
+			}
+			_signDocument() {
+				this.hide = false;
+				let userPrincipal = this._getUserPrinicipal();
+				if (userPrincipal.id_token != null && userPrincipal.loggedin) {
+					this.$.signDocument.headers['Authorization'] = userPrincipal.id_token;
+				}
+				this.$.signDocument.url = '/digisign/signature/' + this.signatureId + '/';
+				this.$.signDocument.generateRequest();
+
+
+			}
+			_handleSignDocumentResponse(event, details) {
+				this.$.clientDocHistoryAjax.generateRequest();
+			}
+			handleResponse(event, details) {
+				this.hide = true;
+				const docHistory = details.response;
+				this.items = docHistory;
+			}
+			_showCosignerDetails(event) {
+				const coSignerPopup = Polymer.dom(this.$.cosignerDetails).firstElementChild;
+				this.cosignerArray = event.model.item.signRecipients;
+				console.log(this.cosignerArray);
+				coSignerPopup._showCosignerDetails(this.cosignerArray);
+			}
+			getSignStatus(item){
+			
+				
+				return "pending";
+			}
+		}
+
+		window.customElements.define(IngDSCustomerDocHistory.is, IngDSCustomerDocHistory);
+	</script>
+</dom-module>

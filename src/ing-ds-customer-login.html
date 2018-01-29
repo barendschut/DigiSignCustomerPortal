@@ -1,0 +1,172 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../bower_components/iron-validator-behavior/iron-validator-behavior.html">
+<link rel="import" href="../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="corp-ds-customer-fonts.html">
+
+<dom-module id="corp-ds-customer-login">
+	<template>
+		<style>
+			:host {
+				display: block;
+
+				padding: 10px 20px;
+			}
+
+			paper-card {
+				--paper-card-header: {
+					background-color: white;
+
+				}
+				--paper-card-header-text: {
+
+					color: #FF6200;
+					font-family: 'Open Sans', sans-serif;
+				}
+				;
+			}
+
+			paper-input {
+				outline: 0;
+				width: 100%;
+				border: 0;
+				border-top-left-radius: 3px;
+				border-top-right-radius: 3px;
+				border-bottom-left-radius: 3px;
+				border-bottom-right-radius: 3px;
+				box-sizing: border-box;
+				font-size: 14px;
+				margin-top: 10px;
+				font-family: 'Open Sans', sans-serif;
+			}
+
+
+			paper-button {
+				outline: 0;
+				background: #FF6200;
+				width: 90%;
+				border: 0;
+				padding: 15px;
+				margin-top: 60px;
+				margin-left: 15px;
+				border-top-left-radius: 3px;
+				border-top-right-radius: 3px;
+				border-bottom-left-radius: 3px;
+				border-bottom-right-radius: 3px;
+				color: #FFFFFF;
+				font-size: 14px;
+				-webkit-transition: all 0.3 ease;
+				transition: all 0.3 ease;
+				cursor: pointer;
+				font-family: 'Open Sans', sans-serif;
+			}
+
+			#loginSuccess {
+				--paper-toast-background-color: #FF6200;
+				--paper-toast-color: white;
+			}
+
+			paper-toast {
+
+				width: 30%;
+			}
+		</style>
+		<iron-ajax id="clientLoginAjax" method="post" url="/digisign/login" on-response="handleSignInResponse"
+		 on-error="handleError" content-type="text/json" handle-as="text">
+
+		</iron-ajax>
+		<iron-localstorage name="user-storage" value="{{storedUser}}"></iron-localstorage>
+		<paper-card heading="LOGIN TO CUSTOMER DS PORTAL">
+			<div class="card-content">
+				<div>
+					<paper-input always-float-label label="user-name" value={{username}} invalid$={{!username}}></paper-input>
+					<paper-input class="label-test" always-float-label label="password" value={{password}} type="password" invalid$={{!password}}></paper-input>
+					<paper-button on-click="_handleAuthentication">LogIn</button>
+						<paper-toast id="loginSuccess" class="fit-bottom" text="{{toastMessage}}"></paper-toast>
+				</div>
+			</div>
+		</paper-card>
+	</template>
+
+	<script>
+		class IngDsCustomerLogin extends Polymer.Element {
+			static get is() { return 'corp-ds-customer-login'; }
+			static get properties() {
+				return {
+					// This shouldn't be neccessary, but the Analyzer isn't picking up
+					// Polymer.Element#rootPath
+					rootPath: String,
+					username: {
+						type: String,
+						value: '',
+						notify: true
+					},
+					message: {
+						type: String,
+						value: '',
+					},
+					password: {
+						type: String,
+						value: '',
+						notify: true
+					}
+				};
+			}
+			_handleAuthentication(event) {
+
+				console.log('UserName' + this.username);
+
+				this.$.clientLoginAjax.set('body', JSON.stringify({
+					"username": this.username, "password": this.password,
+				}));
+				this.$.clientLoginAjax.generateRequest();
+			}
+
+			handleSignInResponse(event, request) {
+
+				console.log('event', event);
+				if (event.detail.response && event.detail.response.message.rc && event.detail.response.message.rc !== '0') {
+					this.errorMsg = 'Login Failed';
+					return;
+				}
+
+				console.log('event response' + event.detail.response);
+				const header = event.detail.xhr.getResponseHeader('Authorization');
+				this.storedUser = {
+					id_token: header,
+					loggedin: true
+				};
+
+				window.localStorage.setItem('logged-in',true);
+
+
+				//this.dispatch({ type: 'LOGIN', isLoggedin: true });
+				this._changeRoute();
+			}
+			_changeRoute() {
+				console.log('ROUTE CHANGED----');
+				//this.set("route.path", "/overview");
+				window.history.pushState({}, null, 'doc-history');
+				window.dispatchEvent(new CustomEvent('location-changed'));
+			}
+			handleError() {
+				var errorMessages = event.detail.request.__data.response;
+				this._showToast();
+				this.loggedin = false;
+			}
+			_showToast() {
+				this.toastMessage = 'Login Failed';
+				this.$.loginSuccess.open();
+				return;
+			}
+		}
+
+		window.customElements.define(IngDsCustomerLogin.is, IngDsCustomerLogin);
+	</script>
+</dom-module>

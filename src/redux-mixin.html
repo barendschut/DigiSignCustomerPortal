@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer-redux/polymer-redux.html"/>
+<script src="../node_modules/redux/dist/redux.js"></script>
+
+<script>
+
+    const appState = {isLoggedin:false};
+    const reducer = (state,action) => {
+
+        switch(action.type){
+
+            case 'LOGIN':
+                console.log('<----Action is dispatched--->');
+                return Object.assign({},state,{
+                    isLoggedin:true
+                });
+            case 'LOGOUT' :
+                return Object.assign({},state,{
+                    isLoggedin:false
+                })
+        }
+        return state;
+    }
+
+    const store = Redux.createStore(reducer,appState);
+    const ReduxMixin = PolymerRedux(store);
+</script>

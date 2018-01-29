@@ -1,0 +1,109 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="corp-ds-customer-tabs.html">
+<link rel="import" href="corp-ds-customer-fonts.html">
+
+<dom-module id="corp-ds-customer-header">
+  <template>
+    <style include="shared-styles iron-flex iron-flex-layout iron-flex-alignment">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+
+      app-header {
+        background-color: white;
+        --app-header-shadow: {
+          box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
+          height: 5px;
+          bottom: -10px;
+        }
+        ;
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+        width: 100%;
+      }
+
+      .justify-child {
+        @apply(--layout-self-center);
+      }
+
+      .flexchild {
+        @apply(--layout-flex);
+      }
+
+      @media screen and (max-width: 500px) and (min-width: 400px) {
+        img {
+
+          width: 50px;
+        }
+        p {
+          font-size: 12px;
+        }
+      }
+
+      @media screen and (max-width: 375px) and (min-width: 320px) {
+        img {
+
+          width: 45px;
+        }
+        p {
+          font-size: 8px;
+          color: red;
+        }
+      }
+
+      @media screen and (max-width: 320px) and (min-width: 300px) {
+        img {
+
+          width: 45px;
+        }
+        p {
+          font-size: 8px;
+          color: red;
+        }
+      }
+
+      p {
+
+        font-family: 'Open Sans', sans-serif;
+        color: blue;
+      }
+    </style>
+
+    <app-header>
+      <app-toolbar primary>
+        <div class="container">
+          <div class="justify-child">
+            <img src="./images/ing.gif" width="100px;"/>
+          </div>
+          <div class="justify-child">
+            <p>DIGITAL SIGNATURE</p>
+          </div>
+          <div class="justify-child">
+            <corp-ds-customer-tabs></corp-ds-customer-tabs>
+          </div>
+        </div>
+      </app-toolbar>
+      <div class="relative" style="height:5px;">
+        <div class="fit" style="background-color:#FF6200;color: white;min-height:5px;"></div>
+      </div>
+    </app-header>
+  </template>
+
+  <script>
+    class IngDsCustomerHeader extends Polymer.Element {
+      static get is() { return 'corp-ds-customer-header'; }
+    }
+
+    window.customElements.define(IngDsCustomerHeader.is, IngDsCustomerHeader);
+  </script>
+</dom-module>
